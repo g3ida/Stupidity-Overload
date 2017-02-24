@@ -17,12 +17,14 @@ public :
 
 	void setNumRows(int numRows);
 	void setNumCols(int numCols);
+	//inline void setNumRepeats(int numRepeats);
 	// note that frame numbers vary from to m_numFrames-1
 	void setStartFrame(int startFrame);
 	void setEndFrame(int endFrame);
 	inline void setFps(int fps);
 	inline void setCurrentFrame(int currentFrame);
 
+	//inline int getNumRepeatsLeft();
 	inline int getCurrentFrame() const;
 	inline int getFps() const;
 
@@ -43,6 +45,8 @@ private :
 	int m_numFrames = 1;
 	int m_startFrame = 0;
 	int m_endFrame = 0;
+
+	int m_numRepeats = 0;
 
 	bool m_loop = true;
 	bool m_paused = false;

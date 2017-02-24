@@ -38,7 +38,7 @@ Texture::load(SDL_Renderer* renderer,  const std::string& filename)
 	}
 	SDL_QueryTexture(m_texture, nullptr, nullptr, &m_width, &m_height);
 
-	LOG << "loaded texture " << filename << " : " << m_width << "--" << m_height << '\n';
+	LOG ("loaded texture ", filename , " : " , m_width , "--" , m_height , '\n');
 }
 
 void
@@ -46,7 +46,7 @@ Texture::free()
 {
 	if(m_texture != nullptr)
 	{
-		LOG << "deleted texture " << m_filename << '\n';
+		LOG("deleted texture ", m_filename, '\n');
 		SDL_DestroyTexture(m_texture);
 		m_texture = nullptr;
 	}

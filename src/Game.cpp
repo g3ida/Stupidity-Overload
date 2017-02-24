@@ -7,7 +7,7 @@
 #include "../include/MenuState.h"
 
 // for logging
-#include "../include/Logger.h"
+#include "../include/logging/Log.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

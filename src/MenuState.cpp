@@ -1,5 +1,5 @@
 #include "../include/MenuState.h"
-#include "../include/Logger.h"
+#include "../include/logging/Log.h"
 #include "../include/input/InputManager.h"
 #include "../include/input/Action.h"
 
@@ -35,13 +35,13 @@ MenuState::onEnter(SDL_Renderer* renderer)
 	r.pause();
 	r.loop(true);
 
+    LOG( "menu state entred\n");
 
-	LOG << "menu state entred\n";
     InputManager::getInstance().bind(State::MoveLeft, SDL_SCANCODE_LEFT);
     InputManager::getInstance().registerCommand(State::MoveLeft,
     [&]()
     {
-        LOG << "left fired !"<< "\n";
+        LOG("left fired !\n");
         isleft = true;
         x-=3;
         l.resume();
@@ -53,7 +53,7 @@ MenuState::onEnter(SDL_Renderer* renderer)
     InputManager::getInstance().registerCommand(State::MoveRight,
     [&]()
     {
-        LOG << "right fired !"<< "\n";
+        LOG("right fired !\n");
         isleft = false;
         x+=3;
         r.resume();
@@ -67,20 +67,20 @@ MenuState::handleEvent(SDL_Event& event)
 {
     /*
     mouse.process(event);
-    if(mouse.leftButtonDown()) LOG << "left button down\n";
-    if(mouse.leftButtonPressed()) LOG << "left button pressed\n";
-    if(mouse.leftButtonReleased()) LOG << "left button released\n";
-    LOG <<mouse.getX() <<" " << mouse.getY() << "\n";
+    if(mouse.leftButtonDown()) LOG("left button down\n");
+    if(mouse.leftButtonPressed()) LOG("left button pressed\n");
+    if(mouse.leftButtonReleased()) LOG("left button released\n");
+    LOG(mouse.getX(), " ", mouse.getY(), "\n");
 
     keyboard.process(event);
     if(keyboard.keyPressed(SDL_SCANCODE_A))
-        LOG << "A pressed !"<< "\n";
+        LOG("A pressed !\n");
 
     if(keyboard.keyReleased(SDL_SCANCODE_A))
-        LOG << "A released !"<< "\n";
+        LOG("A released !\n");
 
     if(keyboard.keyDown(SDL_SCANCODE_A))
-        LOG << "A down !"<< "\n";
+        LOG("A down !\n");
     */
 
     InputManager::getInstance().process(event);
@@ -114,5 +114,5 @@ void
 MenuState::onExit()
 {
     //m_sprite.free();
-	LOG << "menu state exited\n";
+	LOG("menu state exited\n");
 }

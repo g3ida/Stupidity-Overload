@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "../include/Logger.h"
+#include "../include/logging/Log.h"
 
 class Texture
 {

@@ -1,5 +1,5 @@
 #include "../include/Sprite.h"
-#include "../include/Logger.h"
+#include "../include/logging/Log.h"
 
 Sprite::Sprite()
 {
@@ -14,7 +14,7 @@ Sprite::~Sprite()
 void
 Sprite::setNumRows(int numRows)
 {
-	if(m_numRows == 0)
+	if(m_numRows <= 0)
 		return;
 	m_numRows = numRows;
 	m_numFrames = m_numRows * m_numCols;
@@ -27,7 +27,7 @@ Sprite::setNumRows(int numRows)
 void
 Sprite::setNumCols(int numCols)
 {
-	if(m_numCols == 0)
+	if(m_numCols <= 0)
 		return;
 	m_numCols = numCols;
 	m_numFrames = m_numRows * m_numCols;
@@ -41,14 +41,14 @@ Sprite::setNumCols(int numCols)
 void
 Sprite::setStartFrame(int startFrame)
 {
-	if(startFrame > m_numFrames)
+	if(startFrame > m_numFrames || startFrame < 0)
 		return;
-	
+
 	m_startFrame = startFrame;
 
 	if(m_endFrame < m_startFrame)
 		m_endFrame = m_startFrame;
-	
+
 	if(m_currentFrame < m_startFrame)
 		m_currentFrame = m_startFrame;
 
@@ -62,9 +62,9 @@ Sprite::setEndFrame(int endFrame)
 {
 	if(endFrame > m_numFrames || endFrame < m_startFrame)
 		return;
-	
+
 	m_endFrame = endFrame;
-	
+
 	if(m_currentFrame > m_endFrame)
 		m_currentFrame = m_endFrame;
 
@@ -93,7 +93,7 @@ Sprite::update(Uint32 ms)
 {
 	if(m_paused)
 		return;
-	
+
 	if(m_loop)
 	{
 		if(m_reverse)
@@ -103,7 +103,7 @@ Sprite::update(Uint32 ms)
 				m_currentFrame = m_endFrame + 1 - tmp % m_numFrames; // I don't know why it works when i added +1
 			else
 				m_currentFrame -= tmp;
-			
+
 			m_frameTime = ((ms + m_frameTime) % (1000 / m_fps));
 		}
 		else
@@ -137,7 +137,7 @@ Sprite::update(Uint32 ms)
 			}
 		}
 	}
-	LOG << "frame number : " << m_currentFrame << "\n";
+	//LOG ("frame number : ", m_currentFrame, "\n");
 }
 
 void

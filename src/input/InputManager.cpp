@@ -1,5 +1,4 @@
 #include "../../include/input/InputManager.h"
-#include "../../include/Logger.h"
 
 
 InputManager::InputManager() : m_ActionKeyMap(), m_StatesKeyMap(),
