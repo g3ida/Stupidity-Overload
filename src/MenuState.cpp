@@ -1,7 +1,6 @@
 #include "../include/MenuState.h"
 #include "../include/logging/Log.h"
-#include "../include/input/InputManager.h"
-#include "../include/input/Action.h"
+#include "../include/InputManager.h"
 
 void
 MenuState::onEnter(SDL_Renderer* renderer)
@@ -15,7 +14,7 @@ MenuState::onEnter(SDL_Renderer* renderer)
 	s.restart();
 	s.loop(false);
 
-    l.setNumRows(4);
+	l.setNumRows(4);
 	l.setNumCols(12);
 	l.setStartFrame(15);
 	l.setEndFrame(23);
@@ -25,7 +24,7 @@ MenuState::onEnter(SDL_Renderer* renderer)
 	l.pause();
 	l.loop(true);
 
-    r.setNumRows(4);
+  	r.setNumRows(4);
 	r.setNumCols(12);
 	r.setStartFrame(4);
 	r.setEndFrame(11);
@@ -37,9 +36,9 @@ MenuState::onEnter(SDL_Renderer* renderer)
 
     LOG( "menu state entred\n");
 
-    InputManager::getInstance().bind(State::MoveLeft, SDL_SCANCODE_LEFT);
-    InputManager::getInstance().registerCommand(State::MoveLeft,
-    [&]()
+    InputManager::getInstance().bind("Move Left", InputManager::Keyboard::Event::keyDown(SDL_SCANCODE_LEFT));
+    InputManager::getInstance().registerCommand("Move Left",
+    [&](void*, void*)
     {
         LOG("left fired !\n");
         isleft = true;
@@ -49,9 +48,9 @@ MenuState::onEnter(SDL_Renderer* renderer)
     );
 
 
-    InputManager::getInstance().bind(State::MoveRight, SDL_SCANCODE_RIGHT);
-    InputManager::getInstance().registerCommand(State::MoveRight,
-    [&]()
+    InputManager::getInstance().bind("Move Right", InputManager::Keyboard::Event::keyDown(SDL_SCANCODE_RIGHT));
+    InputManager::getInstance().registerCommand("Move Right",
+    [&](void*, void*)
     {
         LOG("right fired !\n");
         isleft = false;
@@ -60,30 +59,20 @@ MenuState::onEnter(SDL_Renderer* renderer)
     }
     );
 
+	InputManager::getInstance().bind("Mouse Wheel Range", InputManager::Mouse::RangeEvent::MouseWheel);
+	InputManager::getInstance().registerCommand("Mouse Wheel Range",
+	[&](void* xe, void* ye)
+	{
+		isleft = false;
+		x+=*(static_cast<int*>(xe));
+		r.resume();
+	}
+	);
 }
 
 AbstractGameState*
-MenuState::handleEvent(SDL_Event& event)
+MenuState::handleEvent()
 {
-    /*
-    mouse.process(event);
-    if(mouse.leftButtonDown()) LOG("left button down\n");
-    if(mouse.leftButtonPressed()) LOG("left button pressed\n");
-    if(mouse.leftButtonReleased()) LOG("left button released\n");
-    LOG(mouse.getX(), " ", mouse.getY(), "\n");
-
-    keyboard.process(event);
-    if(keyboard.keyPressed(SDL_SCANCODE_A))
-        LOG("A pressed !\n");
-
-    if(keyboard.keyReleased(SDL_SCANCODE_A))
-        LOG("A released !\n");
-
-    if(keyboard.keyDown(SDL_SCANCODE_A))
-        LOG("A down !\n");
-    */
-
-    InputManager::getInstance().process(event);
     return nullptr;
 }
 
@@ -103,9 +92,13 @@ AbstractGameState*
 MenuState::render(SDL_Renderer* m_renderer)
 {
     if(isleft)
+    {
         drawSprite(x, 100, l, t);
+    }
     else
+    {
         drawSprite(x, 100, r, t);
+    }
 
 	return nullptr;
 }

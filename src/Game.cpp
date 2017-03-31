@@ -5,6 +5,7 @@
 #include "../include/GameSettings.h"
 #include "../include/GameException.h"
 #include "../include/MenuState.h"
+#include "../include/InputManager.h"
 
 // for logging
 #include "../include/logging/Log.h"
@@ -48,6 +49,35 @@ Game::init()
 		throw GameInitExeception(std::string("FATAL ERROR : cannot create SDL renderer ! ") + SDL_GetError());
     }
 
+	//set the X window button to quit.
+	InputManager::getInstance().bind("Quit Game", InputManager::Window::WindowEvent::QuitRequest);
+	InputManager::getInstance().registerCommand("Quit Game",
+	[&](void*, void*)
+	{
+		LOG("quit request !\n");
+		m_end = true;
+	}
+	);
+
+	//left ALT + F4 to quit.
+	InputManager::getInstance().bind("Quit Game",
+	[&]()
+	{
+		if(InputManager::Keyboard::keyDown(SDL_SCANCODE_LALT) &&
+			InputManager::Keyboard::keyPressed(SDL_SCANCODE_F4))
+			return true;
+		return false;
+	}
+	);
+
+	InputManager::getInstance().registerCommand("Quit Game",
+	[&](void*, void*)
+	{
+		LOG("quit request !\n");
+		m_end = true;
+	}
+	);
+
 	try
 	{
 		// creating start menu
@@ -62,22 +92,11 @@ Game::init()
 void
 Game::handleEvents()
 {
-    /*
-	while(SDL_PollEvent(&m_event))
-	{
-		if(m_event.window.event == SDL_WINDOWEVENT_CLOSE)
-			m_end = true;
-	}
-	*/
+	InputManager::getInstance().process();
+	InputManager::getInstance().fire();
+	InputManager::getInstance().clear();
 
-	//SDL_WaitEvent(&m_event);
-
-    if(m_event.window.event == SDL_WINDOWEVENT_CLOSE)
-    {
-        m_end = true;
-    }
-	m_states.top()->handleEvent(m_event);
-
+	m_states.top()->handleEvent();
 }
 
 void
@@ -130,7 +149,7 @@ Game::cleanUp() noexcept
 		// with a better solution but this will work fine in almost all
 		// cases.
 		IMG_Quit();
-        SDL_Quit();
+		SDL_Quit();
 	}
 }
 
@@ -138,7 +157,7 @@ Game::cleanUp() noexcept
 int
 Game::exec()
 {
-    init();
+  init();
 	Uint32 currentTime = SDL_GetTicks();
 	Uint32 lastTime = 0;
 
@@ -146,12 +165,9 @@ Game::exec()
 
     try
     {
-        while(!m_end)
-        {
-			while(SDL_PollEvent(&m_event))
-			{
-	            handleEvents();
-			}
+		while(!m_end)
+		{
+			handleEvents();
 
 			currentTime = SDL_GetTicks();
 			Uint32 deltaTime = currentTime - lastTime;

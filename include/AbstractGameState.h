@@ -7,7 +7,7 @@ class AbstractGameState
 {
 public :
 	virtual void onEnter(SDL_Renderer* renderer) = 0;
-	virtual AbstractGameState* handleEvent(SDL_Event& event) = 0;
+	virtual AbstractGameState* handleEvent() = 0;
 	virtual AbstractGameState* update(Uint32 ms) = 0;
 	virtual AbstractGameState* render(SDL_Renderer* m_renderer) = 0;
 	virtual void onExit() = 0;

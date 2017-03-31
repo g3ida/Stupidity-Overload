@@ -21,7 +21,6 @@ private:
 
     SDL_Window *m_window = nullptr;
     SDL_Renderer *m_renderer = nullptr;
-    SDL_Event m_event;
     bool m_end = false;
 	std::stack<AbstractGameState*> m_states;
 };
