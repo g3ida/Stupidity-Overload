@@ -7,6 +7,7 @@ The keyboard class
 Uint8 InputManager::Keyboard::m_press[SDL_NUM_SCANCODES] = {0};
 Uint8 InputManager::Keyboard::m_release[SDL_NUM_SCANCODES] = {0};
 const Uint8 *InputManager::Keyboard::m_keystates = nullptr;
+SDL_Keymod InputManager::Keyboard::m_modstates = KMOD_NONE;
 
 void
 InputManager::Keyboard::process(SDL_Event& event)
@@ -26,6 +27,7 @@ InputManager::Keyboard::process(SDL_Event& event)
 	}
 
 	m_keystates = SDL_GetKeyboardState(nullptr);
+	m_modstates = SDL_GetModState();
 }
 
 void
@@ -35,6 +37,9 @@ InputManager::Keyboard::clear()
     {
         m_release[i] = m_press[i] = 0;
     }
+
+	m_keystates = nullptr;
+	m_modstates = KMOD_NONE;
 }
 
 /*
