@@ -47,6 +47,7 @@ MenuState::onEnter(SDL_Renderer* renderer)
     }
     );
 
+    //InputManager::getInstance().pushContext("my context");
 
     InputManager::getInstance().bind("Move Right", InputManager::Keyboard::Event::keyDown(SDL_SCANCODE_RIGHT));
     InputManager::getInstance().registerCommand("Move Right",

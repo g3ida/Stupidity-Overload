@@ -5,6 +5,7 @@
 
 #include <map>
 #include <list>
+#include <stack>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -492,25 +493,39 @@ public :
 
 	void fire();
 
+	void pushContext(const std::string& contextName);
+	void popContext();
+
 private :
 	// private constructor to make class singleton
 	InputManager();
 
 private :
-	// callbacks containers
-	std::map<std::string, CommandCallback> m_callbackMap;
 
-	// key mapping
-	std::map<std::string, Keyboard::KeyEvent> m_keyboardKeyMap;
-	// mouse button mapping
-	std::map<std::string, Mouse::MouseEvent> m_mouseButtonMap;
-	// mouse ranges mapping
-	std::map<std::string, Mouse::RangeEvent> m_mouseRangeMap;
-	// window events mapping
-	std::map<std::string, Window::WindowEvent> m_windowEventMap;
-	// user callback events mapping
-	std::map<std::string, EventCallback> m_eventCallbackMap;
-	//std::list<std::pair<EventCallback, std::string>> m_eventCallbackMap;
+	struct Context
+	{
+		Context(const std::string& s) : name(s)	{}
+		Context(std::string&& s) : name(std::forward<std::string>(s)){}
+
+		std::string name;
+
+		// callbacks containers
+		std::map<std::string, CommandCallback> m_callbackMap;
+
+		// key mapping
+		std::map<std::string, Keyboard::KeyEvent> m_keyboardKeyMap;
+		// mouse button mapping
+		std::map<std::string, Mouse::MouseEvent> m_mouseButtonMap;
+		// mouse ranges mapping
+		std::map<std::string, Mouse::RangeEvent> m_mouseRangeMap;
+		// window events mapping
+		std::map<std::string, Window::WindowEvent> m_windowEventMap;
+		// user callback events mapping
+		std::map<std::string, EventCallback> m_eventCallbackMap;
+		//std::list<std::pair<EventCallback, std::string>> m_eventCallbackMap;
+	};
+
+	std::stack<Context> m_contextStack;
 
 	// the event variable
 	SDL_Event m_event;

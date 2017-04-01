@@ -155,11 +155,9 @@ InputManager::Window::clear()
  The InputManager class
 */
 
-InputManager::InputManager() : m_keyboardKeyMap(), m_mouseButtonMap(),
-							m_mouseRangeMap(), m_windowEventMap(),
-							m_eventCallbackMap()
+InputManager::InputManager()
 {
-	// setup default mapping values
+	pushContext("Main Context");
 }
 
 void
@@ -197,31 +195,31 @@ InputManager::clear()
 void
 InputManager::registerCommand(const std::string& actionName, CommandCallback callback)
 {
-	auto i = m_callbackMap.find(actionName);
-	if (i != m_callbackMap.end())
-		m_callbackMap.erase(i);
-	m_callbackMap[actionName] = std::move(callback);
+	auto i = m_contextStack.top().m_callbackMap.find(actionName);
+	if (i != m_contextStack.top().m_callbackMap.end())
+		m_contextStack.top().m_callbackMap.erase(i);
+	m_contextStack.top().m_callbackMap[actionName] = std::move(callback);
 }
 
 void
 InputManager::registerCommand(std::string&& actionName, CommandCallback callback)
 {
-	auto i = m_callbackMap.find(actionName);
-	if (i != m_callbackMap.end())
-		m_callbackMap.erase(i);
-	m_callbackMap[std::move(actionName)] = std::move(callback);
+	auto i = m_contextStack.top().m_callbackMap.find(actionName);
+	if (i != m_contextStack.top().m_callbackMap.end())
+		m_contextStack.top().m_callbackMap.erase(i);
+	m_contextStack.top().m_callbackMap[std::move(actionName)] = std::move(callback);
 }
 
 void
 InputManager::bind(const std::string& actionName, Keyboard::KeyEvent kev)
 {
-	for(auto i = m_keyboardKeyMap.begin(); i != m_keyboardKeyMap.end(); /* no ++i */)
+	for(auto i = m_contextStack.top().m_keyboardKeyMap.begin(); i != m_contextStack.top().m_keyboardKeyMap.end(); /* no ++i */)
 	{
 		if (i->second == kev)
 		{
 			auto e = i;
 			++i;
-			m_keyboardKeyMap.erase(e);
+			m_contextStack.top().m_keyboardKeyMap.erase(e);
 		}
 		else
 		{
@@ -229,24 +227,24 @@ InputManager::bind(const std::string& actionName, Keyboard::KeyEvent kev)
 		}
 	}
 
-	auto i = m_keyboardKeyMap.find(actionName);
-	if (i != m_keyboardKeyMap.end())
-		m_keyboardKeyMap.erase(i);
+	auto i = m_contextStack.top().m_keyboardKeyMap.find(actionName);
+	if (i != m_contextStack.top().m_keyboardKeyMap.end())
+		m_contextStack.top().m_keyboardKeyMap.erase(i);
 
 	// add new mapping
-	m_keyboardKeyMap[actionName] = kev;
+	m_contextStack.top().m_keyboardKeyMap[actionName] = kev;
 }
 
 void
 InputManager::bind(const std::string& actionName, Mouse::MouseEvent mev)
 {
-	for(auto i = m_mouseButtonMap.begin(); i != m_mouseButtonMap.end(); /* no ++i */)
+	for(auto i = m_contextStack.top().m_mouseButtonMap.begin(); i != m_contextStack.top().m_mouseButtonMap.end(); /* no ++i */)
 	{
 		if (i->second == mev)
 		{
 			auto e = i;
 			++i;
-			m_mouseButtonMap.erase(e);
+			m_contextStack.top().m_mouseButtonMap.erase(e);
 		}
 		else
 		{
@@ -254,24 +252,24 @@ InputManager::bind(const std::string& actionName, Mouse::MouseEvent mev)
 		}
 	}
 
-	auto i = m_mouseButtonMap.find(actionName);
-	if (i != m_mouseButtonMap.end())
-		m_mouseButtonMap.erase(i);
+	auto i = m_contextStack.top().m_mouseButtonMap.find(actionName);
+	if (i != m_contextStack.top().m_mouseButtonMap.end())
+		m_contextStack.top().m_mouseButtonMap.erase(i);
 
 	// add new mapping
-	m_mouseButtonMap[actionName] = mev;
+	m_contextStack.top().m_mouseButtonMap[actionName] = mev;
 }
 
 void
 InputManager::bind(const std::string& actionName, Mouse::RangeEvent rev)
 {
-	for(auto i = m_mouseRangeMap.begin(); i != m_mouseRangeMap.end(); /* no ++i */)
+	for(auto i = m_contextStack.top().m_mouseRangeMap.begin(); i != m_contextStack.top().m_mouseRangeMap.end(); /* no ++i */)
 	{
 		if (i->second == rev)
 		{
 			auto e = i;
 			++i;
-			m_mouseRangeMap.erase(e);
+			m_contextStack.top().m_mouseRangeMap.erase(e);
 		}
 		else
 		{
@@ -279,24 +277,24 @@ InputManager::bind(const std::string& actionName, Mouse::RangeEvent rev)
 		}
 	}
 
-	auto i = m_mouseRangeMap.find(actionName);
-	if (i != m_mouseRangeMap.end())
-		m_mouseRangeMap.erase(i);
+	auto i = m_contextStack.top().m_mouseRangeMap.find(actionName);
+	if (i != m_contextStack.top().m_mouseRangeMap.end())
+		m_contextStack.top().m_mouseRangeMap.erase(i);
 
 	// add new mapping
-	m_mouseRangeMap[actionName] = rev;
+	m_contextStack.top().m_mouseRangeMap[actionName] = rev;
 }
 
 void
 InputManager::bind(const std::string& actionName, Window::WindowEvent wev)
 {
-	for(auto i = m_windowEventMap.begin(); i != m_windowEventMap.end(); /* no ++i */)
+	for(auto i = m_contextStack.top().m_windowEventMap.begin(); i != m_contextStack.top().m_windowEventMap.end(); /* no ++i */)
 	{
 		if (i->second == wev)
 		{
 			auto e = i;
 			++i;
-			m_windowEventMap.erase(e);
+			m_contextStack.top().m_windowEventMap.erase(e);
 		}
 		else
 		{
@@ -304,74 +302,74 @@ InputManager::bind(const std::string& actionName, Window::WindowEvent wev)
 		}
 	}
 
-	auto i = m_windowEventMap.find(actionName);
-	if (i != m_windowEventMap.end())
-		m_windowEventMap.erase(i);
+	auto i = m_contextStack.top().m_windowEventMap.find(actionName);
+	if (i != m_contextStack.top().m_windowEventMap.end())
+		m_contextStack.top().m_windowEventMap.erase(i);
 
 	// add new mapping
-	m_windowEventMap[actionName] = wev;
+	m_contextStack.top().m_windowEventMap[actionName] = wev;
 }
 
 void
 InputManager::bind(const std::string& actionName, EventCallback callback)
 {
-	auto i = m_eventCallbackMap.find(actionName);
-	if (i != m_eventCallbackMap.end())
-		m_eventCallbackMap.erase(i);
+	auto i = m_contextStack.top().m_eventCallbackMap.find(actionName);
+	if (i != m_contextStack.top().m_eventCallbackMap.end())
+		m_contextStack.top().m_eventCallbackMap.erase(i);
 
 	// add new mapping
-	m_eventCallbackMap[actionName] = callback;
+	m_contextStack.top().m_eventCallbackMap[actionName] = callback;
 }
 
 void
 InputManager::fire()
 {
-	for(auto x : m_keyboardKeyMap)
+	for(auto x : m_contextStack.top().m_keyboardKeyMap)
 	{
 		if(Keyboard::checkEvent(x.second))
 		{
-			if(m_callbackMap.find(x.first)!= m_callbackMap.end())
+			if(m_contextStack.top().m_callbackMap.find(x.first)!= m_contextStack.top().m_callbackMap.end())
 			{
-				(m_callbackMap[x.first])(nullptr, nullptr);
+				(m_contextStack.top().m_callbackMap[x.first])(nullptr, nullptr);
 			}
 		}
 	}
 
-	for(auto x : m_mouseButtonMap)
+	for(auto x : m_contextStack.top().m_mouseButtonMap)
 	{
 		if(Mouse::checkEvent(x.second))
 		{
-			if(m_callbackMap.find(x.first)!= m_callbackMap.end())
+			if(m_contextStack.top().m_callbackMap.find(x.first)!= m_contextStack.top().m_callbackMap.end())
 			{
-				m_callbackMap[x.first](nullptr, nullptr);
+				m_contextStack.top().m_callbackMap[x.first](nullptr, nullptr);
 			}
 		}
 	}
 
-	for(auto x : m_windowEventMap)
+	for(auto x : m_contextStack.top().m_windowEventMap)
 	{
 		if(Window::checkEvent(x.second))
 		{
-			if(m_callbackMap.find(x.first)!= m_callbackMap.end())
+			if(m_contextStack.top().m_callbackMap.find(x.first)!= m_contextStack.top().m_callbackMap.end())
 			{
-				m_callbackMap[x.first](nullptr, nullptr);
+				m_contextStack.top().m_callbackMap[x.first](nullptr, nullptr);
 			}
 		}
 	}
 
-	for(auto x : m_eventCallbackMap)
+	for(auto x : m_contextStack.top().m_eventCallbackMap)
 	{
 		if((x.second)())
 		{
-			if(m_callbackMap.find(x.first)!= m_callbackMap.end())
+			if(m_contextStack.top().m_callbackMap.find(x.first)!= m_contextStack.top().m_callbackMap.end())
 			{
-				m_callbackMap[x.first](nullptr, nullptr);
+				m_contextStack.top().m_callbackMap[x.first](nullptr, nullptr);
 			}
 		}
 	}
 
 	//process ranges
-	for(auto x : m_mouseRangeMap)
+	for(auto x : m_contextStack.top().m_mouseRangeMap)
 	{
 		int i, j;
 		switch(x.second)
@@ -379,17 +377,30 @@ InputManager::fire()
 		case Mouse::RangeEvent::MouseWheel :
 			if(Mouse::mouseWheelMoved(&i, &j))
 			{
-				if(m_callbackMap.find(x.first) != m_callbackMap.end())
-					m_callbackMap[x.first](static_cast<void*>(&i), static_cast<void*>(&j));
+				if(m_contextStack.top().m_callbackMap.find(x.first) != m_contextStack.top().m_callbackMap.end())
+					m_contextStack.top().m_callbackMap[x.first](static_cast<void*>(&i), static_cast<void*>(&j));
 			}
 			break;
 		case Mouse::RangeEvent::MouseMotion :
 			if(Mouse::mouseMoved(&i, &j))
 			{
-				if(m_callbackMap.find(x.first) != m_callbackMap.end())
-					m_callbackMap[x.first](static_cast<void*>(&i), static_cast<void*>(&j));
+				if(m_contextStack.top().m_callbackMap.find(x.first) != m_contextStack.top().m_callbackMap.end())
+					m_contextStack.top().m_callbackMap[x.first](static_cast<void*>(&i), static_cast<void*>(&j));
 			}
 			break;
 		}
 	}
+}
+
+void
+InputManager::pushContext(const std::string& contextName)
+{
+	m_contextStack.push(Context(contextName));
+}
+
+void
+InputManager::popContext()
+{
+	if(!m_contextStack.empty() && m_contextStack.top().name != "Main Context")
+		m_contextStack.pop();
 }
