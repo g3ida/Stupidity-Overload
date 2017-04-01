@@ -3,15 +3,13 @@
 
 #include "AbstractGameState.h"
 #include "Sprite.h"
-#include "input/Mouse.h"
-#include "input/Keyboard.h"
 
 class MenuState : public AbstractGameState
 {
 public :
-    MenuState(){};
+  MenuState(){};
 	virtual void onEnter(SDL_Renderer* renderer);
-	virtual AbstractGameState* handleEvent(SDL_Event& event);
+	virtual AbstractGameState* handleEvent();
 	virtual AbstractGameState* update(Uint32 ms);
 	virtual AbstractGameState* render(SDL_Renderer* m_renderer);
 	virtual void onExit();
@@ -21,8 +19,6 @@ private :
 	Sprite s, l, r;
 	int x = 300;
 	Texture t;
-	Mouse mouse;
-	Keyboard keyboard;
 };
 
 #endif //_DEF_MENU_STATE_

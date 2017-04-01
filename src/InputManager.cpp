@@ -27,7 +27,6 @@ InputManager::Keyboard::process(SDL_Event& event)
 	}
 
 	m_keystates = SDL_GetKeyboardState(nullptr);
-	m_modstates = SDL_GetModState();
 }
 
 void
@@ -37,9 +36,6 @@ InputManager::Keyboard::clear()
     {
         m_release[i] = m_press[i] = 0;
     }
-
-	m_keystates = nullptr;
-	m_modstates = KMOD_NONE;
 }
 
 /*

@@ -59,16 +59,16 @@ MenuState::onEnter(SDL_Renderer* renderer)
     }
     );
 
-	InputManager::getInstance().bind("Mouse Wheel Range", InputManager::Mouse::RangeEvent::MouseWheel);
-	InputManager::getInstance().registerCommand("Mouse Wheel Range",
-	[&](void* xe, void* ye)
-	{
-		isleft = false;
-		x+=*(static_cast<int*>(xe));
-		r.resume();
-	}
-	);
-}
+    //	InputManager::getInstance().bind("Mouse Move", InputManager::Mouse::RangeEvent::MouseMotion);
+    //	InputManager::getInstance().registerCommand("Mouse Move",
+    //	[&](void* xe, void* ye)
+    //	{
+    //		isleft = false;
+    //		x+=*(static_cast<int*>(xe));
+    //		r.resume();
+    //	}
+    //	);
+    }
 
 AbstractGameState*
 MenuState::handleEvent()

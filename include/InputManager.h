@@ -71,56 +71,59 @@ public :
 			return false;
 		}
 
-		static inline bool keyPressed(SDL_Scancode k)
+		static inline bool keyPressed(const SDL_Scancode& k)
 		{
 			return m_press[k];
 		}
 
-		static inline bool keyReleased(SDL_Scancode k)
+		static inline bool keyReleased(const SDL_Scancode& k)
 		{
 			return m_release[k];
 		}
 
-		static inline bool keyDown(SDL_Scancode k)
+		static inline bool keyDown(const SDL_Scancode& k)
 		{
 			if(m_keystates == nullptr) return false;
 			return m_keystates[k];
 		}
 
-		static inline bool keyUp(SDL_Scancode k)
+		static inline bool keyUp(const SDL_Scancode& k)
 		{
 			if(m_keystates == nullptr) return false;
 			return !m_keystates[k];
 		}
 
-		static inline bool keyPressed(SDL_Keycode k)
+		static inline bool keyPressed(const SDL_Keycode& k)
 		{
 			return m_press[SDL_GetScancodeFromKey(k)];
 		}
 
-		static inline bool keyReleased(SDL_Keycode k)
+		static inline bool keyReleased(const SDL_Keycode& k)
 		{
 			return m_release[SDL_GetScancodeFromKey(k)];
 		}
 
-		static inline bool keyDown(SDL_Keycode k)
+		static inline bool keyDown(const SDL_Keycode& k)
 		{
 			if(m_keystates == nullptr) return false;
 			return m_keystates[SDL_GetScancodeFromKey(k)];
 		}
 
-		static inline bool keyUp(SDL_Keycode k)
+		static inline bool keyUp(const SDL_Keycode& k)
 		{
 			if(m_keystates == nullptr) return false;
 			return !m_keystates[SDL_GetScancodeFromKey(k)];
 		}
 
-		static inline bool modifierDown(SDL_Keymod modifier)
+        // Here, the use of int instead of SDL_Keymod is justified by the fact
+        // that some modifiers (like KMOD_ALT) are just integers (the result of
+        // logical "or" combination of other keymods).
+		static inline bool modifierDown(int modifier)
 		{
 			return ((modifier & m_modstates) == modifier);
 		}
 
-		static inline bool modifierUp(SDL_Keymod modifier)
+		static inline bool modifierUp(int modifier)
 		{
 			return (!modifierDown(modifier));
 		}
@@ -132,7 +135,7 @@ public :
 		static Uint8 m_press[SDL_NUM_SCANCODES];
 		static Uint8 m_release[SDL_NUM_SCANCODES];
 		static const Uint8 *m_keystates;
-		static SDL_Keymod m_modstates;
+        static SDL_Keymod m_modstates;
 	};
 
 	/*

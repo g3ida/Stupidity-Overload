@@ -63,20 +63,13 @@ Game::init()
 	InputManager::getInstance().bind("Quit Game",
 	[&]()
 	{
-		if(InputManager::Keyboard::keyDown(SDL_SCANCODE_LALT) &&
+		if(InputManager::Keyboard::modifierDown(KMOD_ALT) &&
 			InputManager::Keyboard::keyPressed(SDL_SCANCODE_F4))
 			return true;
 		return false;
 	}
 	);
 
-	InputManager::getInstance().registerCommand("Quit Game",
-	[&](void*, void*)
-	{
-		LOG("quit request !\n");
-		m_end = true;
-	}
-	);
 
 	try
 	{
